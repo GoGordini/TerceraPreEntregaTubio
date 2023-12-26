@@ -7,8 +7,12 @@ import {passportStrategiesEnum,accessRolesEnum} from "../config/enums.js";
 import { config } from 'dotenv';
 import { generateToken,authorization} from '../utils.js';
 import {passportCall} from "../config/passport.config.js";
+import UsersDto from '../DTO/users.dto.js';
+import UsersRepository from '../repositories/users.repository.js';
 
+//const usersRepository=new UsersRepository
 const router = Router();
+
 
 router.post("/register",passport.authenticate(passportStrategiesEnum.REGISTER,{failureRedirect: "fail-register"}), async (req, res) => {
     res.status(201).send({ status: 'success', message: 'user registered' })}) //passport.auth es un middleware. Pongo register, primer parámetro, porque en config puse passport.use("register"). Segundo parámetro es el camino como plan B (si falla va a la ruta fail-register).
@@ -48,7 +52,8 @@ router.post('/login', passport.authenticate(passportStrategiesEnum.LOGIN, { fail
 // });
 
 router.get('/current', passportCall("jwt"), authorization(accessRolesEnum.ADMIN),(req, res) => {
-    res.send({ status: 'success', payload: req.user });
+    const data = new UsersDto(req.user);
+    res.send({ status: 'success', payload: data });
 });
 
 router.get('/fail-login', async (req, res) => {

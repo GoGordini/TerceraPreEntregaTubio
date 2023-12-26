@@ -5,6 +5,7 @@ const persistence = configs.persistence;
 let CartManager;
 let ProductManager;
 let ChatManager;
+let UserManager;
 
 switch(persistence) {
     case 'DB':
@@ -18,6 +19,8 @@ switch(persistence) {
         CartManager = CartsDB;
         const { default: ChatDB } = await import('./dbManager/chat.db.js');
         ChatManager = ChatDB;
+        const { default: UsersDB } = await import('./dbManager/users.db.js');
+        UserManager = UsersDB;
         break;
     case 'File':
         console.log('Persistence: File');
@@ -27,11 +30,14 @@ switch(persistence) {
         CartManager = CartsFile;
         const { default: ChatFile} = await import('./fileManager/chat.file.js');
         ChatManager = ChatFile;
+        const { default: UsersFile } = await import('./dbManager/users.db.js');
+        UserManager = UsersFile;
         break;
 }
 
 export {
     ProductManager,
     CartManager,
-    ChatManager
+    ChatManager,
+    UserManager
 }

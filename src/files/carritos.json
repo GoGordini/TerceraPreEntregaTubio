@@ -1,11 +1,17 @@
 [
 	{
-		"id": "da51f619f8b14de2acfb2d2c",
+		"_id": "79ebab8653d84d93bac47a17",
 		"products": [
 			{
-				"product": "0fd0ac19b87543d7926737fe",
-				"quantity": 5
+				"product": {
+					"_id": "0fd0ac19b87543d7926737fe"
+				},
+				"quantity": 4
 			}
 		]
+	},
+	{
+		"_id": "5af9b5ed9a4e43d184afc0fa",
+		"products": []
 	}
 ]

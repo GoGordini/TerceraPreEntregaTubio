@@ -1,18 +1,21 @@
 import express from "express";
 import handlebars from "express-handlebars";
-import {__dirname} from "./utils.js";
+import {__dirname,chatPath,productPath} from "./utils.js";
 import viewsRouter from "./routes/views.router.js";
 import productsRouter from './routes/products.router.js';
 import cartsRouter from "./routes/carts.router.js";
 import { Server } from "socket.io";
 import mongoose from "mongoose";
-import ChatManager from "./dao/dbManager/chat.db.js";
-const chatManager= new ChatManager();
-import ProductManager from "./dao/dbManager/products.db.js";
+// import ProductManager from "./dao/dbManager/products.db.js";
+// import ChatManager from "./dao/dbManager/chat.db.js";
+import { ProductManager,ChatManager } from './dao/factory.js';
+const chatManager= new ChatManager(chatPath);
+const productManager= new ProductManager(productPath);
+// import ChatManager from "./dao/fileManager/chat.file.js";
+// const chatManager= new ChatManager(chatPath);
 import sessionsRouter from './routes/sessions.router.js';
 import MongoStore from 'connect-mongo';
 import session from 'express-session';
-const productManager= new ProductManager();
 import {initializePassport} from "./config/passport.config.js"
 import passport from "passport";
 import configs from "./config.js";

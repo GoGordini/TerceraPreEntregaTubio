@@ -6,7 +6,6 @@ constructor (){
 
 getAll = async ()=>{
 const messages = await chatsModel.find().lean();
-// el .lean() pasa de BSON a POJO:
 return messages;
 }
 

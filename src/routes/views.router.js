@@ -1,16 +1,19 @@
 import {Router} from "express";
 import passport from "passport";
 const router = Router();
-import { productPath,authorization } from '../utils.js';
-import ProductManager from '../dao/dbManager/products.db.js';
-import ChatManager from "../dao/dbManager/chat.db.js";
-import CartManager from "../dao/dbManager/carts.db.js";
+import { productPath,authorization,chatPath,cartPath } from '../utils.js';
+//import ProductManager from '../dao/dbManager/products.db.js';
+//import ChatManager from "../dao/fileManager/chat.file.js"
+import { ProductManager, ChatManager,CartManager } from '../dao/factory.js';
+
+//import ChatManager from "../dao/dbManager/chat.db.js";
+//import CartManager from "../dao/dbManager/carts.db.js";
 import { productsModel } from "../dao/dbManager/models/products.model.js";
 import {accessRolesEnum} from "../config/enums.js";
 
 const productManager= new ProductManager(productPath);
-const chatManager= new ChatManager();
-const cartManager= new CartManager();
+const chatManager= new ChatManager(chatPath);
+const cartManager= new CartManager(cartPath);
 
 const publicAccess = (req, res, next) => {
    // if(req.user) return res.redirect('/');

@@ -1,6 +1,7 @@
 import { productPath } from '../utils.js';
 
-import ProductManager from '../dao/fileManager/products.file.js';
+import { ProductManager } from '../dao/factory.js';
+//import ProductManager from '../dao/fileManager/products.file.js';
 //import ProductManager from "../dao/dbManager/products.db.js"
 const productManager= new ProductManager(productPath);
 

@@ -1,5 +1,6 @@
 import fs from 'fs';
 import {v4 as uuidv4} from "uuid";
+import { productPath } from '../../utils.js';
 
 export default class CartManager {
 
@@ -19,13 +20,13 @@ export default class CartManager {
     
     getCartById=async (id_buscada)=>{
             const carts = await this.getAll();
-            const cart_found=carts.find((carrito) => carrito.id===id_buscada)
+            const cart_found=carts.find((carrito) => carrito._id===id_buscada)
             return cart_found;       
             };
     
     delete=async (id_a_eliminar)=>{
                 const carts = await this.getAll();
-                const cartIndex = carts.findIndex(carrito => carrito.id === id_a_eliminar);
+                const cartIndex = carts.findIndex(carrito => carrito._id === id_a_eliminar);
                 if(cartIndex===-1){
                     return "Cart not found"
                 };
@@ -36,7 +37,7 @@ export default class CartManager {
 
     update=async (id,productos)=>{
                     const carts = await this.getAll();
-                    const cartIndex = carts.findIndex(carrito => carrito.id === id);
+                    const cartIndex = carts.findIndex(carrito => carrito._id === id);
                     if(cartIndex===-1){
                         return "Cart not found"
                     };                    
@@ -44,27 +45,24 @@ export default class CartManager {
                     await fs.promises.writeFile(this.path, JSON.stringify(carts, null, '\t'));
                     return carts[cartIndex];
                     };
-
-    // deleteProduct = async (id,pid) =>{
-    //     const carts = await this.getAll();
-    //     const cartIndex = carts.findIndex(carrito => carrito.id === id);
-    //     if(cartIndex===-1){
-    //         return "Cart not found"
-    //     };                  
-    //     const productIndex = carts[cartIndex].products.findIndex(producto => producto.product === pid);
-    //     if(cartIndex===-1){
-    //         return "Cart not found"
-    //     }; 
-    //     if(productIndex===-1){
-    //         return "Product not in cart"
-    //     };                  
-    //     carts[cartIndex].products.products.splice(productIndex,1);
-    //     await fs.promises.writeFile(this.path, JSON.stringify(carts, null, '\t'));
-    //     return carts;
-    //     };
+    
+    updateOne=async (id,pid,productos)=>{
+                        const carts = await this.getAll();
+                        const cartIndex = carts.findIndex(carrito => carrito._id === id);
+                        if(cartIndex===-1){
+                            return "Cart not found"
+                        };        
+                        if (productos.length===1){
+                            productos[0].product={_id:pid};
+                        } else {
+                        productos[productos.length-1].product={_id:pid}};
+                        carts[cartIndex].products=productos;
+                        await fs.promises.writeFile(this.path, JSON.stringify(carts, null, '\t'));
+                        return carts[cartIndex];
+                        };
 
     save = async () =>{ //Crea carrito vacío
-                        const cart = {id: uuidv4().replace(/-/g, '').substring(0, 24),products:[]}
+                        const cart = {_id: uuidv4().replace(/-/g, '').substring(0, 24),products:[]}
                         const carts = await this.getAll();
                         carts.push(cart);
                         await fs.promises.writeFile(this.path, JSON.stringify(carts, null, '\t'));

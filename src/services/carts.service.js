@@ -1,5 +1,6 @@
 //import CartManager from "../dao/dbManager/carts.db.js";
-import CartManager from '../dao/fileManager/carts.file.js';
+//import CartManager from '../dao/fileManager/carts.file.js';
+import { CartManager } from '../dao/factory.js';
 import { cartPath, productPath} from '../utils.js';
 
 const cartManager = new CartManager(cartPath);
@@ -24,17 +25,19 @@ export const updateCart= async (cid,pid,quantity=1,stock) => {
     }
     const cart = await cartManager.getCartById(cid)
     if (cart.products.length===0){
-        cart.products.push({"product":pid,"quantity":quantity})
+        cart.products.push({"product":pid,"quantity":quantity}) //Problema acá y en línea 35 al usar file.
     } else{
-    const indexProductInCart = cart.products.findIndex(product=>product.product===pid)
-    //const indexProductInCart = cart.products.findIndex(product=>product.product._id.toString()===pid)
+    //const indexProductInCart = cart.products.findIndex(product=>product.product===pid)
+    const indexProductInCart = cart.products.findIndex(product=>product.product._id.toString()===pid)
         if (indexProductInCart!==-1){
             cart.products[indexProductInCart].quantity+=quantity;
+            const result = await cartManager.update(cid,{"products": cart.products});
+            return result;
                 } else {
                     cart.products.push({"product":pid,"quantity":quantity});
                 };
-            }        
-    const result = await cartManager.update(cid,{"products": cart.products});
+            }    
+    const result = await cartManager.updateOne(cid,pid,cart.products);
     return result;
 }
 
@@ -44,15 +47,15 @@ export const updateFullCart= async (cid,products) => {
 }
 
 export const deleteCart= async (cid) => {
-    const result = await cartManager.delete(cid);
+    const result = await cartManager.update(cid,{"products": []});
     return result;
 }
 
 export const deleteProductFromCart= async (cid,pid) => {
     const cart = await cartManager.getCartById(cid);
     if (cart.products.length!==0){
-        const indexProductInCart = cart.products.findIndex(product=>product.product===pid)
-        // const indexProductInCart = cart.products.findIndex(product=>product.product._id.toString()===pid)
+        //const indexProductInCart = cart.products.findIndex(product=>product.product===pid)
+        const indexProductInCart = cart.products.findIndex(product=>product.product._id.toString()===pid)
     if (indexProductInCart!==-1){
                 cart.products.splice(indexProductInCart,1);
                     } 
@@ -61,3 +64,22 @@ export const deleteProductFromCart= async (cid,pid) => {
     return result;
 }
 
+// export const updateCart= async (cid,pid,quantity=1,stock) => {
+//     if (notEnoughStock(quantity,stock)){
+//         return ("Not enough stock")
+//     }
+//     const cart = await cartManager.getCartById(cid)
+//     if (cart.products.length===0){
+//         cart.products.push({"product":pid,"quantity":quantity}) //Problema acá y en línea 35 al usar file.
+//     } else{
+//     //const indexProductInCart = cart.products.findIndex(product=>product.product===pid)
+//     const indexProductInCart = cart.products.findIndex(product=>product.product._id.toString()===pid)
+//         if (indexProductInCart!==-1){
+//             cart.products[indexProductInCart].quantity+=quantity;
+//                 } else {
+//                     cart.products.push({"product":pid,"quantity":quantity});
+//                 };
+//             }        
+//     const result = await cartManager.update(cid,{"products": cart.products});
+//     return result;
+// }

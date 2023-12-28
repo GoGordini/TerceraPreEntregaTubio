@@ -1,16 +1,21 @@
 //import CartManager from "../dao/dbManager/carts.db.js";
 //import CartManager from '../dao/fileManager/carts.file.js';
-import { CartManager,TicketManager } from '../dao/factory.js';
-import { cartPath} from '../utils.js';
+import { CartManager,ProductManager,TicketManager } from '../dao/factory.js';
+import { cartPath,productPath} from '../utils.js';
 import  CartManagerRepository  from '../repositories/carts.repository.js';
 import  TicketManagerRepository  from '../repositories/tickets.repository.js';
+import  ProductManagerRepository  from '../repositories/products.repository.js';
+
 const cartManager = new CartManager(cartPath);
 const cartManagerRepository= new CartManagerRepository(cartManager);
 const ticketManager = new TicketManager();
 const ticketManagerRepository= new TicketManagerRepository(ticketManager);
+const productManager = new ProductManager(productPath);
+const productManagerRepository= new ProductManagerRepository(productManager);
 
-const notEnoughStock = (quantity,stock) =>{
-    return quantity>stock;
+
+const enoughStock = (quantity,stock) =>{
+    return quantity<=stock;
 }
 
 export const createCart= async () => {
@@ -65,12 +70,21 @@ export const deleteProductFromCart= async (cid,pid) => {
 export const purchase = async (cid,user) => {
     const cart = await cartManagerRepository.getCartByIdRepository(cid);
     const products = cart.products;
-    console.log(products)
+    let totalPrice=0;
+    products.forEach(async({product,quantity})=>{
+        if (enoughStock(quantity,product.stock)){
+            totalPrice=totalPrice+quantity*product.price;
+            product.stock-=quantity;
+            await cartManagerRepository.deleteProductRepository(cid,product._id);   
+            await productManagerRepository.updateRepository(product._id,product)     
+    } 
+    }
+    );
     const orderNumber = Date.now() + Math.floor(Math.random() * 100000 + 1);
     const ticket ={
         "code": orderNumber,
         "purchase_datetime": new Date(),
-        "amount":15000,
+        "amount":totalPrice,
         "purchaser": user.email
     }
     const result = await ticketManagerRepository.saveRepository(ticket);

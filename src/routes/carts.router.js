@@ -23,7 +23,7 @@ router.put("/:cid",validator.params(getCartByIdSchema),validator.body(updateFull
 
 router.put('/:cid/product/:pid', authorization(accessRolesEnum.USER),updateProductInCart);
 
-router.post('/:cid/purchase',validator.params(getCartByIdSchema), authorization(accessRolesEnum.USER),purchase);
+router.post('/:cid/purchase',validator.params(getCartByIdSchema),purchase);
 
 export default router;
 

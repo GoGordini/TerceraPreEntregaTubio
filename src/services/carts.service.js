@@ -3,13 +3,14 @@
 import { CartManager,ProductManager,TicketManager } from '../dao/factory.js';
 import { cartPath,productPath} from '../utils.js';
 import  CartManagerRepository  from '../repositories/carts.repository.js';
-import  TicketManagerRepository  from '../repositories/tickets.repository.js';
+//import  TicketManagerRepository  from '../repositories/tickets.repository.js';
 import  ProductManagerRepository  from '../repositories/products.repository.js';
+import {ticketService as generatePurchase} from "./tickets.service.js";
 
 const cartManager = new CartManager(cartPath);
 const cartManagerRepository= new CartManagerRepository(cartManager);
-const ticketManager = new TicketManager();
-const ticketManagerRepository= new TicketManagerRepository(ticketManager);
+//const ticketManager = new TicketManager();
+//const ticketManagerRepository= new TicketManagerRepository(ticketManager);
 const productManager = new ProductManager(productPath);
 const productManagerRepository= new ProductManagerRepository(productManager);
 
@@ -79,15 +80,18 @@ export const purchase = async (cid,user) => {
             await productManagerRepository.updateRepository(product._id,product)     
     } 
     }
-    );
-    const orderNumber = Date.now() + Math.floor(Math.random() * 100000 + 1);
-    const ticket ={
-        "code": orderNumber,
-        "purchase_datetime": new Date(),
-        "amount":totalPrice,
-        "purchaser": user.email
-    }
-    const result = await ticketManagerRepository.saveRepository(ticket);
+    )
+    ;
+    
+    // const orderNumber = Date.now() + Math.floor(Math.random() * 100000 + 1);
+    // const ticket ={
+    //     "code": orderNumber,
+    //     "purchase_datetime": new Date(),
+    //     "amount":totalPrice,
+    //     "purchaser": user.email
+    // }
+    const result = await generatePurchase(user,totalPrice)
+    //const result = await ticketService.saveRepository(ticket);
     return result;
 }
 

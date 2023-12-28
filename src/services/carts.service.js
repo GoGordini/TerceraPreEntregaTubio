@@ -18,7 +18,6 @@ export const getCart= async (cid) => {
     const cart = await cartManager.getCartById(cid)
     return cart;
 }
-
 export const updateCart= async (cid,pid,quantity=1,stock) => {
     if (notEnoughStock(quantity,stock)){
         return ("Not enough stock")
@@ -31,13 +30,11 @@ export const updateCart= async (cid,pid,quantity=1,stock) => {
     const indexProductInCart = cart.products.findIndex(product=>product.product._id.toString()===pid)
         if (indexProductInCart!==-1){
             cart.products[indexProductInCart].quantity+=quantity;
-            const result = await cartManager.update(cid,{"products": cart.products});
-            return result;
                 } else {
                     cart.products.push({"product":pid,"quantity":quantity});
                 };
-            }    
-    const result = await cartManager.updateOne(cid,pid,cart.products);
+            }        
+    const result = await cartManager.update(cid,{"products": cart.products});
     return result;
 }
 
@@ -64,6 +61,7 @@ export const deleteProductFromCart= async (cid,pid) => {
     return result;
 }
 
+
 // export const updateCart= async (cid,pid,quantity=1,stock) => {
 //     if (notEnoughStock(quantity,stock)){
 //         return ("Not enough stock")
@@ -76,10 +74,12 @@ export const deleteProductFromCart= async (cid,pid) => {
 //     const indexProductInCart = cart.products.findIndex(product=>product.product._id.toString()===pid)
 //         if (indexProductInCart!==-1){
 //             cart.products[indexProductInCart].quantity+=quantity;
+//             const result = await cartManager.update(cid,{"products": cart.products});
+//             return result;
 //                 } else {
 //                     cart.products.push({"product":pid,"quantity":quantity});
 //                 };
-//             }        
-//     const result = await cartManager.update(cid,{"products": cart.products});
+//             }    
+//     const result = await cartManager.updateOne(cid,pid,cart.products);
 //     return result;
 // }

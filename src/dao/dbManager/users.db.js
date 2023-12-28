@@ -11,6 +11,7 @@ getUserByEmail = async (email) => {
 
 save = async (user) => {
 const result = await usersModel.create(user);
+console.log(result);
 return result;
 }
 }

@@ -1,3 +1,5 @@
+//Si tuviera solo DB, esta capa se puede obviar y que las consultas a la DB se hagan directamente de repository.
+
 import {productsModel} from "./models/products.model.js";
 
 export default class Products {

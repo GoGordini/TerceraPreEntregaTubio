@@ -1,64 +1,20 @@
 import passport from 'passport';
 import jwt from "passport-jwt";
-import local from 'passport-local'; //uso estrategia local
+import local from 'passport-local'; 
 import usersModel from '../dao/dbManager/models/users.model.js';
 import { createHash, isValidPassword,cartPath } from '../utils.js';
 import GitHubStrategy from 'passport-github2';
 import CartManager from "../dao/dbManager/carts.db.js";
 import configs from "../config.js";
 import {passportStrategiesEnum} from "./enums.js"
-//local es autenticacion con usuario y contraseña
+import {UserManager} from "../dao/factory.js";
 
+const userManager= new UserManager();
 const cartManager = new CartManager(cartPath);
 const LocalStrategy = local.Strategy;
 const JWTStrategy = jwt.Strategy;
 const ExtractJWT = jwt.ExtractJwt; //define de dónde extrae el token de acceso.
 
-// const initializePassport = () => {
-//     //Implementación de nuestro registro
-// passport.use('register', new LocalStrategy({ //segundo parámetro es la estrategia
-//         passReqToCallback: true, //permite acceder al objeto request como cualquier otro middleware
-//         usernameField: 'email' //porque no tenemos un username sino un email
-//     }, async (req, username, password, done) => {
-//         try {
-//             const { first_name, last_name, age } = req.body; //obvio email y password porque ya los tengo de dos líneas antes
-//             const user = await usersModel.findOne({ email: username }); //el email no vino en el body como tal sino que tengo el username.
-            
-//             if(user) {
-//                 return done(null, false); //null es sin errores es la búsqueda, false es que no pudo autenticar porque el email ya existe.
-//             }
-
-//             const userToSave = {
-//                 first_name,
-//                 last_name,
-//                 email: username,
-//                 age,
-//                 password: createHash(password)
-//             }
-
-//             const result = await usersModel.create(userToSave);
-//             return done(null, result); //req.user {first,last,age,email}. Passport genera el user dentro de request con esos atributos.
-//         } catch (error) {
-//             return done(`Incorrect credentials`)
-//         }
-//     }));
-//     //Implementación de nuestro login
-// //  passport.use('login', new LocalStrategy({
-// //         usernameField: 'email'
-// //     }, async (username, password, done) => {
-// //         try {
-// //             const user = await usersModel.findOne({ email: username });
-
-// //             if(!user || !isValidPassword(password, user.password)) {
-// //                 return done(null, false)
-// //             }
-
-// //  return done(null, user); //req.user
-
-// //         } catch (error) {
-// //             return done(`Incorrect credentials`)
-// //         }
-// //     }));
 const initializePassport = () => {
     //Implementación de nuestro mecanismo de autenticación con github
     passport.use(passportStrategiesEnum.GITHUB, new GitHubStrategy({ //los 3 primeros parámetros salen de la app de git.
@@ -78,7 +34,8 @@ const initializePassport = () => {
             const carrito = await cartManager.save();
             
             const email = profile.emails[0].value; //en profile llega un atributo que se llama emails: emails: [{value: 'ap@hotmail.com'}]
-            const user = await usersModel.findOne({ email });
+//            const user = await usersModel.findOne({ email });
+            const user = await userManager.getUserByEmail(email);
 
             if(!user) {
                 //crear la cuenta o usuario desde cero. Obtengo lo que puedo de Github.  _json: { name: 'alex' }
@@ -91,7 +48,8 @@ const initializePassport = () => {
                     password: ' ' //no la necesito con este mecanismo de aut, por eso seteo vacío.
                 }
 
-                const result = await usersModel.create(newUser);
+                //const result = await usersModel.create(newUser);
+                const result = await userManager.save(newUser);
                 return done(null, result); //req.user {first,last,age,email}
             } else {
                 return done(null, user);
@@ -102,7 +60,6 @@ const initializePassport = () => {
         }
     }));
 
-//Implementación de nuestro registro
 passport.use(passportStrategiesEnum.REGISTER, new LocalStrategy({ //segundo parámetro es la estrategia
         passReqToCallback: true, //permite acceder al objeto request como cualquier otro middleware
         usernameField: 'email' //porque no tenemos un username sino un email
@@ -112,8 +69,8 @@ passport.use(passportStrategiesEnum.REGISTER, new LocalStrategy({ //segundo par�
             if (!first_name|| !last_name || !username || !age || !password) {
                 return done(null,false);
             }
-            const user = await usersModel.findOne({ email: username }); //el email no vino en el body como tal sino que tengo el username.
-            
+            //const user = await usersModel.findOne({ email: username }); //el email no vino en el body como tal sino que tengo el username.
+            const user = await userManager.getUserByEmail(username);
             if(user) {
                 return done(null, false); //null es sin errores es la búsqueda, false es que no pudo autenticar porque el email ya existe.
             }
@@ -128,19 +85,20 @@ passport.use(passportStrategiesEnum.REGISTER, new LocalStrategy({ //segundo par�
                 role: username==="adminCoder@coder.com"? ("admin") : ("user")
             }
 
-            const result = await usersModel.create(userToSave);
+            //const result = await usersModel.create(userToSave);
+            const result = await userManager.save(userToSave);
             return done(null, result); //req.user {first,last,age,email}. Passport genera el user dentro de request con esos atributos.
         } catch (error) {
             return done(`Incorrect credentials`)
         }
     }));
-//    Implementación de nuestro login
+
  passport.use(passportStrategiesEnum.LOGIN, new LocalStrategy({
         usernameField: 'email'
     }, async (username, password, done) => {
         try {
-            const user = await usersModel.findOne({ email: username });
-
+            //const user = await usersModel.findOne({ email: username });
+            const user = await userManager.getUserByEmail(username);
             if(!user || !isValidPassword(password, user.password)) {
                 return done(null, false)
             }

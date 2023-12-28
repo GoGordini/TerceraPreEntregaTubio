@@ -1,0 +1,1 @@
+//Prácticamente igual al manager. Si hace falta, transforma los datos que recibe o envía.

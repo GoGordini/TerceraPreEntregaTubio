@@ -19,10 +19,11 @@ update = async (cid,products) =>{
     return result;
 }
 
-updateOne = async (cid,pid,products) =>{
-    const result = await cartsModel.updateOne({_id:cid},products);
-    return result;
-}
+// updateOne = async (cid,pid,productos) =>{
+//     const result = await cartsModel.updateOne({_id:cid},productos);
+//     return result;
+// }
+
 delete = async (cid) =>{
     const result = await cartsModel.updateOne({_id:cid},{$set:{products:[]}});
     return result;

@@ -13,7 +13,7 @@ const chatManager= new ChatManager(chatPath);
 const productManager= new ProductManager(productPath);
 // import ChatManager from "./dao/fileManager/chat.file.js";
 // const chatManager= new ChatManager(chatPath);
-import sessionsRouter from './routes/sessions.router.js';
+import usersRouter from './routes/users.router.js';
 import MongoStore from 'connect-mongo';
 import session from 'express-session';
 import {initializePassport} from "./config/passport.config.js"
@@ -68,7 +68,7 @@ app.use('/api/tests', testsRouter.getRouter());
 app.use('/api/sessiontests', sessionTestsRouter.getRouter());
 app.use("/api/products",productsRouter);
 app.use("/api/carts",cartsRouter);
-app.use('/api/sessions', sessionsRouter);
+app.use('/api/sessions', usersRouter);
 app.use((req, res) => {
     res.status(404).send('Error 404: Page Not Found');
   });

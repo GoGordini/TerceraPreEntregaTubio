@@ -1,32 +1,35 @@
 import { productPath } from '../utils.js';
 
+import  ProductManagerRepository  from '../repositories/products.repository.js';
 import { ProductManager } from '../dao/factory.js';
+
 //import ProductManager from '../dao/fileManager/products.file.js';
 //import ProductManager from "../dao/dbManager/products.db.js"
 const productManager= new ProductManager(productPath);
+const productManagerRepository= new ProductManagerRepository(productManager);
 
 export const getProduct= async () => {
-    const products = await productManager.getAll();
+    const products = await productManagerRepository.getAllRepository();
     return products;
 }
 
 export const getProductById= async (pid) => {
-    const product = await productManager.getProductById(pid)
+    const product = await productManagerRepository.getProductByIdRepository(pid)
     return product;
 }
 
 export const deleteProduct= async (pid) => {
-    const result = await productManager.delete(pid);
+    const result = await productManagerRepository.deleteRepository(pid);
     return result;
 }
 
 export const createProduct= async (product) => {
-    const result = await productManager.save(product);
+    const result = await productManagerRepository.saveRepository(product);
     return result;
 }
 
 export const updateProduct= async (pid,product) => {
-    const result = await productManager.update(pid,product);
+    const result = await productManagerRepository.updateRepository(pid,product);
     return result;
 }
 

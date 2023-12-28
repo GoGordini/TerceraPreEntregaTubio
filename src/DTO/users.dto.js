@@ -5,6 +5,7 @@ export default class UsersDto {
         this.email = user.email;
         this.role=user.role;
     }
+    
 }
 
 //Recibe como parámetro lo que quiero transformar. El DTO se aplica en el router donde quiero hacer la transformación, pero debería ir en la capa repository.

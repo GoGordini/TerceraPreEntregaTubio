@@ -10,6 +10,7 @@ export const __dirname = dirname(__filename);
 export const productPath = join (__dirname,"./files/productos.json");
 export const  cartPath = join (__dirname, "./files/carritos.json")
 export const  chatPath = join (__dirname, "./files/chats.json")
+export const  userPath = join (__dirname, "./files/users.json")
 
 //1. hashear nuestra contraseña
 export const createHash = password => //paso como parámetro password a hashear

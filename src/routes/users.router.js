@@ -4,12 +4,9 @@ import {passportStrategiesEnum,accessRolesEnum} from "../config/enums.js";
 import { config } from 'dotenv';
 import { generateToken,authorization} from '../utils.js';
 import {passportCall} from "../config/passport.config.js";
-import UsersDto from '../DTO/users.dto.js';
-import UsersRepository from '../repositories/users.repository.js';
-//import { getUser, createUser} from '../controllers/users.controller.js';
+import {getUserCurrent} from "../controllers/users.controller.js";
 //import {usersSchema} from "../schemas/users.schema.js";
 
-//const usersRepository=new UsersRepository
 const router = Router();
 
 
@@ -39,21 +36,7 @@ router.post('/login', passport.authenticate(passportStrategiesEnum.LOGIN, { fail
     //res.send({ status: 'success', message: 'login success',access_token:accessToken })
 });
 
-// router.get('/current', async (req, res) => {
-//     if(!req.user) { //user me lo trae passport
-//         return res.status(400).send({ status: 'error', message: 'no user' })
-//     }
-//     res.status(200).send({ status: 'success', payload: req.user });
-// });
-
-// router.get('/current', authToken, (req, res) => {
-//     res.send({ status: 'success', payload: req.user });
-// });
-
-router.get('/current', passportCall("jwt"), authorization(accessRolesEnum.ADMIN),(req, res) => {
-    const data = new UsersDto(req.user);
-    res.send({ status: 'success', payload: data });
-});
+router.get('/current', passportCall("jwt"), authorization(accessRolesEnum.ADMIN),getUserCurrent);
 
 router.get('/fail-login', async (req, res) => {
     res.status(500).send({ status: 'error', message: 'login fail' });

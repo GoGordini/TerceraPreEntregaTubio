@@ -3,8 +3,6 @@ import { productPath } from '../utils.js';
 import  ProductManagerRepository  from '../repositories/products.repository.js';
 import { ProductManager } from '../dao/factory.js';
 
-//import ProductManager from '../dao/fileManager/products.file.js';
-//import ProductManager from "../dao/dbManager/products.db.js"
 const productManager= new ProductManager(productPath);
 const productManagerRepository= new ProductManagerRepository(productManager);
 

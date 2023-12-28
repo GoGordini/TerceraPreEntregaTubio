@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createCart, getCart,updateCart,deleteCart,deleteProductFromCart,addProductToCart,updateProductInCart} from '../controllers/carts.controller.js';
+import { createCart, getCart,updateCart,deleteCart,deleteProductFromCart,addProductToCart,updateProductInCart, purchase} from '../controllers/carts.controller.js';
 import {updateFullCartSchema, getCartByIdSchema,productCartSchema} from "../schemas/carts.schema.js"
 import validator from '../middlewares/validator.js';
 import {accessRolesEnum} from "../config/enums.js";
@@ -22,6 +22,8 @@ router.put("/:cid",validator.params(getCartByIdSchema),validator.body(updateFull
 //router.put("/:cid",validator.params(getCartByIdSchema), updateCart);
 
 router.put('/:cid/product/:pid', authorization(accessRolesEnum.USER),updateProductInCart);
+
+router.post('/:cid/purchase',validator.params(getCartByIdSchema), authorization(accessRolesEnum.USER),purchase);
 
 export default router;
 

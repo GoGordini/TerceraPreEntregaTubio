@@ -6,6 +6,7 @@ let CartManager;
 let ProductManager;
 let ChatManager;
 let UserManager;
+let TicketManager;
 
 switch(persistence) {
     case 'DB':
@@ -21,6 +22,8 @@ switch(persistence) {
         ChatManager = ChatDB;
         const { default: UsersDB } = await import('./dbManager/users.db.js');
         UserManager = UsersDB;
+        const { default: TicketsDB } = await import('./dbManager/tickets.db.js');
+        TicketManager = TicketsDB;
         break;
     case 'File':
         console.log('Persistence: File');
@@ -32,6 +35,8 @@ switch(persistence) {
         ChatManager = ChatFile;
         const { default: UsersFile } = await import('./dbManager/users.db.js');
         UserManager = UsersFile;
+        const { default: TicketsFile } = await import('./dbManager/tickets.db.js');
+        TicketManager = TicketsFile;
         break;
 }
 
@@ -39,5 +44,6 @@ export {
     ProductManager,
     CartManager,
     ChatManager,
-    UserManager
+    UserManager,
+    TicketManager
 }

@@ -1,4 +1,4 @@
-import {createCart as createCartService,getCart as getCartService,updateCart as updateCartService, deleteCart as deleteCartService, deleteProductFromCart as deleteProductFromCartService, updateFullCart as updateFullCartService} from "../services/carts.service.js";
+import {createCart as createCartService,getCart as getCartService,updateCart as updateCartService, deleteCart as deleteCartService, deleteProductFromCart as deleteProductFromCartService, updateFullCart as updateFullCartService, purchase as purchaseService} from "../services/carts.service.js";
 import {getProductById as getProductByIdService} from "../services/products.service.js";
 
 export const createCart = async (req, res) => {
@@ -36,8 +36,8 @@ export const addProductToCart = async (req,res)=>{
         if (!product){
                 return res.status(404).send({status:"error",message:"Product not found"})
             } 
-        const result = await updateCartService(cid,pid,1,product.stock);
-        (result==="Not enough stock")? res.status(400).send({status:"error",message:"Not enough stock"}) : res.status(201).send({status:"success",payload:result});
+        const result = await updateCartService(cid,pid,1);
+        res.status(201).send({status:"success",payload:result});
             }
     catch(error){
         res.status(500).send({error:error.message});}
@@ -107,9 +107,21 @@ export const updateProductInCart = async (req,res)=>{
                 return res.status(404).send({status:"error",message:"Product not found"})
             }        
             
-        const result = await updateCartService(cid,pid,amount.quantity,product.stock);
-        (result==="Not enough stock")? res.status(400).send({status:"error",message:"Not enough stock"}) : res.status(201).send({status:"success",payload:result});
+        const result = await updateCartService(cid,pid,amount.quantity);
+        res.status(201).send({status:"success",payload:result});
             }
     catch(error){
         res.status(500).send({error:error.message});}
+    }
+
+export const purchase = async (req, res) => {
+        try {
+            const { cid } = req.params;
+            const user  = req.user;
+            const result = await purchaseService(cid, user);
+            
+            res.send({ result });
+        } catch (error) {
+            res.status(500).send()
+        }
     }

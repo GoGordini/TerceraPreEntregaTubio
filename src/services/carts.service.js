@@ -1,12 +1,13 @@
 //import CartManager from "../dao/dbManager/carts.db.js";
 //import CartManager from '../dao/fileManager/carts.file.js';
-import { CartManager } from '../dao/factory.js';
-import { cartPath, productPath} from '../utils.js';
+import { CartManager,TicketManager } from '../dao/factory.js';
+import { cartPath} from '../utils.js';
 import  CartManagerRepository  from '../repositories/carts.repository.js';
+import  TicketManagerRepository  from '../repositories/tickets.repository.js';
 const cartManager = new CartManager(cartPath);
 const cartManagerRepository= new CartManagerRepository(cartManager);
-
-
+const ticketManager = new TicketManager();
+const ticketManagerRepository= new TicketManagerRepository(ticketManager);
 
 const notEnoughStock = (quantity,stock) =>{
     return quantity>stock;
@@ -21,10 +22,7 @@ export const getCart= async (cid) => {
     const cart = await cartManagerRepository.getCartByIdRepository(cid)
     return cart;
 }
-export const updateCart= async (cid,pid,quantity=1,stock) => {
-    if (notEnoughStock(quantity,stock)){
-        return ("Not enough stock")
-    }
+export const updateCart= async (cid,pid,quantity=1) => {
     const cart = await cartManagerRepository.getCartByIdRepository(cid)
     if (cart.products.length===0){
         cart.products.push({"product":pid,"quantity":quantity}) //Problema acá y en línea 35 al usar file.
@@ -64,6 +62,22 @@ export const deleteProductFromCart= async (cid,pid) => {
     return result;
 }
 
+export const purchase = async (cid,user) => {
+    const cart = await cartManagerRepository.getCartByIdRepository(cid);
+    const products = cart.products;
+    console.log(products)
+    const orderNumber = Date.now() + Math.floor(Math.random() * 100000 + 1);
+    const ticket ={
+        "code": orderNumber,
+        "purchase_datetime": new Date(),
+        "amount":15000,
+        "purchaser": user.email
+    }
+    const result = await ticketManagerRepository.saveRepository(ticket);
+    return result;
+}
+
+    
 
 // export const updateCart= async (cid,pid,quantity=1,stock) => {
 //     if (notEnoughStock(quantity,stock)){
